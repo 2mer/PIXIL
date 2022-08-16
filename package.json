@@ -6,6 +6,7 @@
 	"scripts": {
 		"build": "rm -rf build && webpack --config webpack.config.js",
 		"serve": "webpack serve --config webpack.config.dev.js",
+		"prepare": "pnpm build",
 		"pub": "pnpm publish --access public"
 	},
 	"keywords": [],
