@@ -1,10 +1,10 @@
 {
 	"name": "@sgty/pixil",
-	"version": "1.0.0",
+	"version": "1.0.0-t1",
 	"description": "",
-	"main": "main.js",
+	"main": "build/main.js",
 	"scripts": {
-		"build": "webpack --config webpack.config.js",
+		"build": "rm -rf build && webpack --config webpack.config.js",
 		"serve": "webpack serve --config webpack.config.dev.js",
 		"pub": "pnpm publish --access public"
 	},
