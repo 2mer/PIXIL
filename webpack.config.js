@@ -18,6 +18,6 @@ module.exports = {
 		path: path.resolve(__dirname, 'build'),
 	},
 	externals: {
-		'pixi.js': 'commonjs-module pixi.js',
+		'pixi.js': 'import pixi.js',
 	},
 };
