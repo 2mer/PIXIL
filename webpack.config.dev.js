@@ -25,5 +25,7 @@ module.exports = {
 		compress: true,
 		port: 9000,
 	},
-	externals: ['pixi.js'],
+	externals: {
+		'pixi.js': 'PIXI',
+	},
 };

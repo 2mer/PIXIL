@@ -6,6 +6,6 @@
     "target": "es5",
     "moduleResolution": "node",
 	"declaration": true,
-	"declarationDir": "./build/types"
+	"declarationDir": "./build/types",
   }
 }

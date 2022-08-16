@@ -17,5 +17,7 @@ module.exports = {
 	output: {
 		path: path.resolve(__dirname, 'build'),
 	},
-	externals: ['pixi.js'],
+	externals: {
+		'pixi.js': 'PIXI',
+	},
 };
