@@ -16,8 +16,18 @@ module.exports = {
 	},
 	output: {
 		path: path.resolve(__dirname, 'build'),
+		library: { name: 'pixil', type: 'umd' },
 	},
+	// externals: {
+	// 	// 'pixi.js': 'commonjs-module pixi.js',
+	// 	/hello/
+	// },
 	externals: {
-		'pixi.js': 'import pixi.js',
+		'pixi.js': {
+			commonjs: 'pixi.js',
+			commonjs2: 'pixi.js',
+			amd: 'pixi.js',
+			root: 'PIXI',
+		},
 	},
 };
