@@ -1,8 +1,9 @@
 {
 	"name": "@sgty/pixil",
-	"version": "1.0.0-t1",
+	"version": "1.0.0-t2",
 	"description": "",
 	"main": "build/main.js",
+	"types": "build/types",
 	"scripts": {
 		"build": "rm -rf build && webpack --config webpack.config.js",
 		"serve": "webpack serve --config webpack.config.dev.js",
