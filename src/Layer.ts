@@ -15,6 +15,8 @@ export default class Layer {
 
 		this.texture = Texture.from(this.canvas);
 		this.ctx = this.canvas.getContext('2d');
+
+		this.sprite = Sprite.from(this.texture);
 	}
 
 	resizeTo({ width, height }) {
