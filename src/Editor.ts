@@ -1,8 +1,22 @@
 import { Viewport } from 'pixi-viewport';
-import { Application, IApplicationOptions } from 'pixi.js';
+import {
+	Application,
+	IApplicationOptions,
+	SCALE_MODES,
+	settings,
+} from 'pixi.js';
 import Layer from './Layer';
 
-export type EditorOptions = IApplicationOptions;
+export type ViewportInteractionSettings = {
+	drag: boolean;
+	pinch: boolean;
+	wheel: boolean;
+	decelerate: boolean;
+};
+
+export type EditorOptions = IApplicationOptions & {
+	interactions: ViewportInteractionSettings;
+};
 
 export default class Editor {
 	app: Application;
@@ -10,6 +24,10 @@ export default class Editor {
 	layers: Layer[] = [];
 
 	constructor(options: EditorOptions) {
+		settings.SCALE_MODE = SCALE_MODES.NEAREST;
+
+		const { interactions } = options;
+
 		this.app = new Application(options);
 		this.viewport = new Viewport({
 			screenWidth: window.innerWidth,
@@ -21,7 +39,25 @@ export default class Editor {
 		});
 		this.app.stage.addChild(this.viewport);
 
-		this.viewport.drag().pinch().wheel().decelerate();
+		const {
+			drag = true,
+			pinch = true,
+			wheel = true,
+			decelerate = false,
+		} = interactions || {};
+
+		if (drag) {
+			this.viewport.drag();
+		}
+		if (pinch) {
+			this.viewport.pinch();
+		}
+		if (wheel) {
+			this.viewport.wheel();
+		}
+		if (decelerate) {
+			this.viewport.decelerate();
+		}
 	}
 
 	addLayer(layer: Layer) {
