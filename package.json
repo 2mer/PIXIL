@@ -1,6 +1,6 @@
 {
 	"name": "@sgty/pixil",
-	"version": "1.0.0-t11",
+	"version": "1.0.0-t12",
 	"description": "",
 	"main": "build/main.js",
 	"types": "build/types",
@@ -21,7 +21,7 @@
 		"webpack-dev-server": "^4.10.0"
 	},
 	"dependencies": {
-		"pixi-viewport": "^4.35.0",
+		"pixi-viewport": "4.24",
 		"pixi.js": "^6.5.1"
 	}
 }
