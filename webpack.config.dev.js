@@ -1,7 +1,8 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-	entry: './src/index.ts',
+	entry: './sandbox/index.tsx',
 	module: {
 		rules: [
 			{
@@ -16,7 +17,7 @@ module.exports = {
 	},
 	output: {
 		filename: 'bundle.js',
-		path: path.resolve(__dirname, 'build'),
+		path: path.resolve(__dirname, 'server'),
 	},
 	devServer: {
 		static: {
@@ -25,7 +26,10 @@ module.exports = {
 		compress: true,
 		port: 9000,
 	},
-	externals: {
-		'pixi.js': 'PIXI',
-	},
+	plugins: [
+		new HtmlWebpackPlugin({
+			template: path.join(__dirname, 'sandbox/index.html'),
+		}),
+	],
+	mode: 'development',
 };

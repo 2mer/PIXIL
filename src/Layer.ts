@@ -7,8 +7,8 @@ export default class Layer {
 	ctx: CanvasRenderingContext2D;
 	destroyed = false;
 	readonly = false;
-	private width: number = 0;
-	private height: number = 0;
+	width: number = 0;
+	height: number = 0;
 
 	constructor() {
 		this.canvas = document.createElement('canvas');
@@ -35,17 +35,26 @@ export default class Layer {
 	}
 
 	loadImage(image: HTMLImageElement) {
-		const handleImageLoad = () => {
-			this.resizeTo(image);
-			this.ctx.drawImage(image, 0, 0);
-			this.texture.update();
-		};
+		return new Promise<void>((resolve, reject) => {
+			const handleImageLoad = () => {
+				this.resizeTo(image);
+				this.ctx.drawImage(image, 0, 0);
+				this.texture.update();
 
-		if (image.complete) {
-			handleImageLoad();
-		} else {
-			image.onload = handleImageLoad;
-		}
+				// update sprite dimensions after texture update
+				this.sprite.width = image.width;
+				this.sprite.height = image.height;
+
+				resolve();
+			};
+
+			if (image.complete) {
+				handleImageLoad();
+			} else {
+				image.onload = handleImageLoad;
+				image.onerror = reject;
+			}
+		});
 	}
 
 	destroy() {
@@ -54,17 +63,17 @@ export default class Layer {
 		this.destroyed = true;
 	}
 
-	static fromUrl(url) {
+	static async fromUrl(url) {
 		const img = new Image();
 		img.src = url;
 
 		return Layer.fromImage(img);
 	}
 
-	static fromImage(image: HTMLImageElement) {
+	static async fromImage(image: HTMLImageElement) {
 		const layer = new Layer();
 
-		layer.loadImage(image);
+		await layer.loadImage(image);
 
 		return layer;
 	}

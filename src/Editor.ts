@@ -5,6 +5,9 @@ import {
 	SCALE_MODES,
 	settings,
 } from 'pixi.js';
+import BackgroundRenderer, {
+	BackgroundRendererOptions,
+} from './BackgroundRenderer';
 import Layer from './Layer';
 
 export type ViewportInteractionSettings = {
@@ -14,55 +17,95 @@ export type ViewportInteractionSettings = {
 	decelerate: boolean;
 };
 
-export type EditorOptions = IApplicationOptions & {
-	interactions: ViewportInteractionSettings;
-};
+export type EditorOptions = IApplicationOptions &
+	BackgroundRendererOptions & {
+		setInteractions?: (viewport: Viewport) => void;
+	};
 
 export default class Editor {
 	app: Application;
 	viewport: Viewport;
 	layers: Layer[] = [];
+	width = 0;
+	height = 0;
+	backgroundRenderer;
 
-	constructor(options: EditorOptions) {
+	constructor({
+		checkerboard,
+		border,
+		setInteractions,
+		...rest
+	}: EditorOptions) {
 		settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
-		const { interactions } = options;
+		this.app = new Application(rest);
+		this.backgroundRenderer = new BackgroundRenderer({
+			renderer: this.app.renderer as any,
+			checkerboard: checkerboard,
+			border: border,
+		});
 
-		this.app = new Application(options);
 		this.viewport = new Viewport({
 			screenWidth: window.innerWidth,
 			screenHeight: window.innerHeight,
-			worldWidth: 1000,
-			worldHeight: 1000,
+			worldHeight: 0,
+			worldWidth: 0,
 
 			interaction: this.app.renderer.plugins.interaction,
 		});
 		this.app.stage.addChild(this.viewport);
 
-		const {
-			drag = true,
-			pinch = true,
-			wheel = true,
-			decelerate = false,
-		} = interactions || {};
+		this.addLayer = this.addLayer.bind(this);
+		this.removeLayer = this.removeLayer.bind(this);
+		this.resize = this.resize.bind(this);
+		this.destroy = this.destroy.bind(this);
 
-		if (drag) {
-			this.viewport.drag();
-		}
-		if (pinch) {
-			this.viewport.pinch();
-		}
-		if (wheel) {
-			this.viewport.wheel();
-		}
-		if (decelerate) {
-			this.viewport.decelerate();
-		}
+		setInteractions?.(this.viewport);
+
+		this.viewport.addChild(this.backgroundRenderer);
+	}
+
+	resize(width: number, height: number) {
+		this.width = width;
+		this.height = height;
+
+		this.viewport.resize(
+			this.app.view.width,
+			this.app.view.height,
+			width,
+			height
+		);
+
+		this.backgroundRenderer.resize(width, height);
+
+		const padding = Math.min(this.width, this.height) * 0.1;
+
+		this.home(padding);
+
+		this.viewport.clamp({
+			left: -padding,
+			top: -padding,
+			bottom: height + padding,
+			right: width + padding,
+		});
+	}
+
+	home(padding = 0) {
+		const pWidth = this.width + padding * 2;
+		const pHeight = this.height + padding * 2;
+
+		this.viewport
+			.fit(false, pWidth, pHeight)
+			.moveCenter(this.width / 2, this.height / 2);
 	}
 
 	addLayer(layer: Layer) {
 		this.layers.push(layer);
 		this.viewport.addChild(layer.sprite);
+
+		if (layer.width > this.width || layer.height > this.height) {
+			this.resize(layer.width, layer.height);
+		}
 
 		return () => {
 			this.removeLayer(layer);

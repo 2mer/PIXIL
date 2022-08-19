@@ -4,3 +4,5 @@ pnpm-lock.yaml
 .gitignore
 src/
 node_modules/
+sandbox/
+public/
