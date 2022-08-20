@@ -24,5 +24,5 @@ export default function useEditor(options: EditorOptions) {
 
 	const isReady = Boolean(editor);
 
-	return [ref, editor, isReady] as const;
+	return [ref, editor as Editor, isReady] as const;
 }

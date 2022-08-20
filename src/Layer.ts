@@ -6,20 +6,16 @@ export default class Layer {
 	sprite: Sprite;
 	ctx: CanvasRenderingContext2D;
 	destroyed = false;
-	readonly = false;
 	width: number = 0;
 	height: number = 0;
 
-	constructor() {
+	constructor({ width, height }) {
 		this.canvas = document.createElement('canvas');
 
 		this.texture = Texture.from(this.canvas);
 		this.ctx = this.canvas.getContext('2d');
 
 		this.sprite = Sprite.from(this.texture);
-	}
-
-	resizeTo({ width, height }) {
 		this.resize(width, height);
 	}
 
@@ -32,29 +28,16 @@ export default class Layer {
 
 		this.sprite.width = width;
 		this.sprite.height = height;
+
+		return this;
 	}
 
-	loadImage(image: HTMLImageElement) {
-		return new Promise<void>((resolve, reject) => {
-			const handleImageLoad = () => {
-				this.resizeTo(image);
-				this.ctx.drawImage(image, 0, 0);
-				this.texture.update();
+	drawImage(image: HTMLImageElement, dx = 0, dy = 0) {
+		this.ctx.drawImage(image, dx, dy);
 
-				// update sprite dimensions after texture update
-				this.sprite.width = image.width;
-				this.sprite.height = image.height;
+		this.update();
 
-				resolve();
-			};
-
-			if (image.complete) {
-				handleImageLoad();
-			} else {
-				image.onload = handleImageLoad;
-				image.onerror = reject;
-			}
-		});
+		return this;
 	}
 
 	destroy() {
@@ -63,18 +46,22 @@ export default class Layer {
 		this.destroyed = true;
 	}
 
-	static async fromUrl(url) {
-		const img = new Image();
-		img.src = url;
+	update() {
+		this.texture.update();
 
-		return Layer.fromImage(img);
+		// update sprite dimensions after texture update
+		this.sprite.width = this.width;
+		this.sprite.height = this.height;
+
+		return this;
 	}
 
-	static async fromImage(image: HTMLImageElement) {
-		const layer = new Layer();
+	// utility call that is chainable and calls update at the end
+	render(renderCallback: (ctx: CanvasRenderingContext2D) => void) {
+		renderCallback(this.ctx);
 
-		await layer.loadImage(image);
+		this.update();
 
-		return layer;
+		return this;
 	}
 }

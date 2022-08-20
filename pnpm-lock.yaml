@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@sgty/m-it': ^1.0.2
   html-webpack-plugin: ^5.5.0
   pixi-viewport: '4.24'
   pixi.js: ^6.5.1
@@ -13,6 +14,7 @@ specifiers:
   webpack-dev-server: ^4.10.0
 
 dependencies:
+  '@sgty/m-it': 1.0.2
   pixi-viewport: 4.24.0_pixi.js@6.5.1
   pixi.js: 6.5.1
 
@@ -514,6 +516,10 @@ packages:
       earcut: 2.2.4
       eventemitter3: 3.1.2
       url: 0.11.0
+    dev: false
+
+  /@sgty/m-it/1.0.2:
+    resolution: {integrity: sha512-wmjcKMK4XXcj9Mi2x3vPpiuxwTNUdqv2LPILfCclju3eS75xbQB9IXgTd4SP+sXya8E2hkmbOHabotEfQdameg==}
     dev: false
 
   /@types/body-parser/1.19.2:

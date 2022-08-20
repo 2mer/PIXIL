@@ -1,26 +1,18 @@
+import EventEmitter from '@sgty/m-it';
 import { Viewport } from 'pixi-viewport';
 import {
 	Application,
+	Container,
 	IApplicationOptions,
 	SCALE_MODES,
 	settings,
 } from 'pixi.js';
-import BackgroundRenderer, {
-	BackgroundRendererOptions,
-} from './BackgroundRenderer';
 import Layer from './Layer';
+import Overlay from './overlays/Overlay';
 
-export type ViewportInteractionSettings = {
-	drag: boolean;
-	pinch: boolean;
-	wheel: boolean;
-	decelerate: boolean;
-};
-
-export type EditorOptions = IApplicationOptions &
-	BackgroundRendererOptions & {
-		setInteractions?: (viewport: Viewport) => void;
-	};
+export type EditorOptions = IApplicationOptions;
+export type EditorEvent = { editor: Editor };
+export type CanvasResizeEvent = EditorEvent & { width: number; height: number };
 
 export default class Editor {
 	app: Application;
@@ -28,22 +20,20 @@ export default class Editor {
 	layers: Layer[] = [];
 	width = 0;
 	height = 0;
-	backgroundRenderer;
 
-	constructor({
-		checkerboard,
-		border,
-		setInteractions,
-		...rest
-	}: EditorOptions) {
+	// overlays
+	overlayContainer;
+	layerContainer;
+	underlayContainer;
+	overlays = [];
+
+	// events
+	onResize = new EventEmitter<CanvasResizeEvent>();
+
+	constructor({ ...rest }: EditorOptions) {
 		settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
 		this.app = new Application(rest);
-		this.backgroundRenderer = new BackgroundRenderer({
-			renderer: this.app.renderer as any,
-			checkerboard: checkerboard,
-			border: border,
-		});
 
 		this.viewport = new Viewport({
 			screenWidth: window.innerWidth,
@@ -53,19 +43,27 @@ export default class Editor {
 
 			interaction: this.app.renderer.plugins.interaction,
 		});
+
 		this.app.stage.addChild(this.viewport);
 
-		this.addLayer = this.addLayer.bind(this);
+		// overlay layers
+		this.overlayContainer = new Container();
+		this.layerContainer = new Container();
+		this.underlayContainer = new Container();
+
+		this.viewport.addChild(this.underlayContainer);
+		this.viewport.addChild(this.layerContainer);
+		this.viewport.addChild(this.overlayContainer);
+
+		// bind methods
+		this.createLayer = this.createLayer.bind(this);
 		this.removeLayer = this.removeLayer.bind(this);
-		this.resize = this.resize.bind(this);
+		this.setCanvasSize = this.setCanvasSize.bind(this);
 		this.destroy = this.destroy.bind(this);
-
-		setInteractions?.(this.viewport);
-
-		this.viewport.addChild(this.backgroundRenderer);
+		this.goHome = this.goHome.bind(this);
 	}
 
-	resize(width: number, height: number) {
+	setCanvasSize(width: number, height: number) {
 		this.width = width;
 		this.height = height;
 
@@ -76,11 +74,9 @@ export default class Editor {
 			height
 		);
 
-		this.backgroundRenderer.resize(width, height);
-
 		const padding = Math.min(this.width, this.height) * 0.1;
 
-		this.home(padding);
+		this.goHome(padding);
 
 		this.viewport.clamp({
 			left: -padding,
@@ -88,28 +84,32 @@ export default class Editor {
 			bottom: height + padding,
 			right: width + padding,
 		});
+
+		this.onResize.emit({ editor: this, width, height });
+
+		return this;
 	}
 
-	home(padding = 0) {
+	goHome(padding = 0) {
 		const pWidth = this.width + padding * 2;
 		const pHeight = this.height + padding * 2;
 
 		this.viewport
 			.fit(false, pWidth, pHeight)
 			.moveCenter(this.width / 2, this.height / 2);
+
+		return this;
 	}
 
-	addLayer(layer: Layer) {
-		this.layers.push(layer);
-		this.viewport.addChild(layer.sprite);
+	getLayers() {
+		return this.layers;
+	}
 
-		if (layer.width > this.width || layer.height > this.height) {
-			this.resize(layer.width, layer.height);
-		}
-
-		return () => {
-			this.removeLayer(layer);
-		};
+	createLayer(): Layer {
+		const layer = new Layer({ width: this.width, height: this.height });
+		layer.resize(this.width, this.height);
+		this.layerContainer.addChild(layer.sprite);
+		return layer;
 	}
 
 	removeLayer(layer: Layer): void {
@@ -117,8 +117,45 @@ export default class Editor {
 		this.viewport.removeChild(layer.sprite);
 	}
 
+	private addOverlayToContainer(overlay: Overlay, container: Container) {
+		this.overlays.push(overlay);
+		overlay.onAdded(this, container);
+	}
+	private removeOverlayFromContainer(overlay: Overlay, container: Container) {
+		const index = this.overlays.indexOf(overlay);
+		if (index !== -1) {
+			this.overlays.splice(index, 1);
+			overlay.onRemoved(this, container);
+		}
+	}
+
+	addOverlay(overlay: Overlay) {
+		this.addOverlayToContainer(overlay, this.overlayContainer);
+
+		return this;
+	}
+
+	removeOverlay(overlay: Overlay) {
+		this.removeOverlayFromContainer(overlay, this.overlayContainer);
+
+		return this;
+	}
+
+	addUnderlay(overlay: Overlay) {
+		this.addOverlayToContainer(overlay, this.underlayContainer);
+
+		return this;
+	}
+
+	removeUnderlay(overlay: Overlay) {
+		this.removeOverlayFromContainer(overlay, this.underlayContainer);
+
+		return this;
+	}
+
 	destroy() {
 		this.app.destroy();
 		this.layers.forEach((layer) => layer.destroy());
+		this.overlays.forEach((overlay) => overlay.destroy());
 	}
 }
