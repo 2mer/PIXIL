@@ -28,7 +28,6 @@ export default function App() {
 
 				editor.createLayer().render(ctx => {
 					ctx.fillStyle = "#ff0000FF"
-					// ctx.fillRect(0.5, 0.5, 19.5, 19.5);
 
 					ctx.lineWidth = 1
 
