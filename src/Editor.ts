@@ -4,11 +4,14 @@ import {
 	Application,
 	Container,
 	IApplicationOptions,
+	InteractionEvent,
 	SCALE_MODES,
 	settings,
 } from 'pixi.js';
 import Layer from './Layer';
 import Overlay from './overlays/Overlay';
+import Point from './Point';
+import Tool from './tools/Tool';
 
 export type EditorOptions = IApplicationOptions;
 export type EditorEvent = { editor: Editor };
@@ -22,9 +25,9 @@ export default class Editor {
 	height = 0;
 
 	// overlays
-	overlayContainer;
-	layerContainer;
-	underlayContainer;
+	overlayContainer: Container;
+	layerContainer: Container;
+	underlayContainer: Container;
 	overlays = [];
 
 	// events
@@ -151,6 +154,30 @@ export default class Editor {
 		this.removeOverlayFromContainer(overlay, this.underlayContainer);
 
 		return this;
+	}
+
+	// see `pixi-viewport` PluginManager for more info on the ordering
+	addTool(tool: Tool, index = 0) {
+		this.viewport.plugins.add(tool.name, tool, index);
+		tool.onAdded();
+	}
+
+	pauseTool(tool: Tool) {
+		tool.pause();
+	}
+
+	resumeTool(tool: Tool) {
+		tool.resume();
+	}
+
+	removeTool(tool: Tool) {
+		this.viewport.plugins.remove(tool.name);
+		tool.onRemoved();
+	}
+
+	// convert global interaction event coords to local canvas coords
+	toCanvas(event: InteractionEvent) {
+		return new Point().copyFrom(this.viewport.toWorld(event.data.global));
 	}
 
 	destroy() {
