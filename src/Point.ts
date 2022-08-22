@@ -11,4 +11,7 @@ export default class Point extends PixiPoint {
 	floor() {
 		return new Point(Math.floor(this.x), Math.floor(this.y));
 	}
+	ceil() {
+		return new Point(Math.ceil(this.x), Math.ceil(this.y));
+	}
 }

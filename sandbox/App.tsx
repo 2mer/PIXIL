@@ -1,4 +1,3 @@
-import { Sprite } from 'pixi.js';
 import React from 'react'
 import { Brush } from '../src';
 import loadImage from '../src/util/loadImage';
@@ -16,13 +15,13 @@ export default function App() {
 	React.useEffect(() => {
 		if (editor) {
 			// setup interactions
-			// editor.viewport.drag({ keyToPress: ['ShiftLeft'] }).wheel().pinch()
-			editor.viewport.drag().wheel().pinch()
+			editor.viewport.drag({ mouseButtons: 'middle' }).wheel().pinch()
+			// editor.viewport.drag().wheel().pinch()
 
 			editor.addUnderlay(new CheckerboardOverlay({ c1: 0x797979, c2: 0xc3c3c3 }))
 			editor.addUnderlay(new OutlineOverlay({ width: 1, color: 0x323232 }))
 
-			editor.addTool(new Brush(editor));
+			editor.addTool(new Brush(editor, { buttons: [0] }));
 
 			// set canvas size to first image load
 			loadImage('logo192.png').then(image => {
@@ -31,7 +30,7 @@ export default function App() {
 				// draw the image onto the layer
 				editor.createLayer().drawImage(image);
 
-				editor.createLayer().render(ctx => {
+				const drawingLayer = editor.createLayer().render(ctx => {
 					ctx.fillStyle = "#ff0000FF"
 
 					ctx.lineWidth = 1
@@ -43,12 +42,7 @@ export default function App() {
 					ctx.stroke();
 				});
 
-				const s = Sprite.from(image);
-				s.width = 40;
-				s.height = 40;
-				// @ts-ignore
-				s.interactive = true;
-				editor.viewport.addChild(s);
+				editor.setFocusedLayer(drawingLayer);
 			});
 
 			(window as any).$editor = editor;

@@ -14,6 +14,7 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+		"@types/color": "^3.0.3",
 		"html-webpack-plugin": "^5.5.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
@@ -25,6 +26,7 @@
 	},
 	"dependencies": {
 		"@sgty/m-it": "^1.0.2",
+		"color": "^4.2.3",
 		"pixi-viewport": "4.24",
 		"pixi.js": "^6.5.1"
 	}

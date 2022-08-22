@@ -8,6 +8,7 @@ import {
 	SCALE_MODES,
 	settings,
 } from 'pixi.js';
+import History from './History';
 import Layer from './Layer';
 import Overlay from './overlays/Overlay';
 import Point from './Point';
@@ -33,8 +34,13 @@ export default class Editor {
 	// events
 	onResize = new EventEmitter<CanvasResizeEvent>();
 
+	focusedLayer: Layer;
+	history;
+
 	constructor({ ...rest }: EditorOptions) {
 		settings.SCALE_MODE = SCALE_MODES.NEAREST;
+
+		this.history = new History();
 
 		this.app = new Application(rest);
 
@@ -118,6 +124,10 @@ export default class Editor {
 	removeLayer(layer: Layer): void {
 		this.layers.splice(this.layers.indexOf(layer), 1);
 		this.viewport.removeChild(layer.sprite);
+	}
+
+	setFocusedLayer(layer: Layer): void {
+		this.focusedLayer = layer;
 	}
 
 	private addOverlayToContainer(overlay: Overlay, container: Container) {
