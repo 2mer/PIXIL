@@ -12,6 +12,7 @@ import History from './History';
 import Layer from './Layer';
 import Overlay from './overlays/Overlay';
 import Point from './Point';
+import MouseTracker from './tools/MouseTracker';
 import Tool from './tools/Tool';
 
 export type EditorOptions = IApplicationOptions;
@@ -32,13 +33,20 @@ export default class Editor {
 	overlays = [];
 
 	// events
-	onResize = new EventEmitter<CanvasResizeEvent>();
+	public readonly onResize = new EventEmitter<CanvasResizeEvent>();
 
 	focusedLayer: Layer;
 	history;
 
-	constructor({ ...rest }: EditorOptions) {
+	protected mouseTracker: MouseTracker;
+
+	// override this incase you need anti-aliasing for some reason
+	protected setupPixiSettings() {
 		settings.SCALE_MODE = SCALE_MODES.NEAREST;
+	}
+
+	constructor({ ...rest }: EditorOptions) {
+		this.setupPixiSettings();
 
 		this.history = new History();
 
@@ -70,6 +78,17 @@ export default class Editor {
 		this.setCanvasSize = this.setCanvasSize.bind(this);
 		this.destroy = this.destroy.bind(this);
 		this.goHome = this.goHome.bind(this);
+
+		this.mouseTracker = new MouseTracker(this);
+		this.addTool(this.mouseTracker);
+	}
+
+	get mousePosition() {
+		return this.mouseTracker.position;
+	}
+
+	get globalMousePosition() {
+		return this.mouseTracker.globalPosition;
 	}
 
 	setCanvasSize(width: number, height: number) {
@@ -194,5 +213,8 @@ export default class Editor {
 		this.app.destroy();
 		this.layers.forEach((layer) => layer.destroy());
 		this.overlays.forEach((overlay) => overlay.destroy());
+
+		// events
+		this.onResize.clear();
 	}
 }

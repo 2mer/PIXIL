@@ -27,7 +27,7 @@
 	"dependencies": {
 		"@sgty/m-it": "^1.0.2",
 		"color": "^4.2.3",
-		"pixi-viewport": "4.24",
+		"pixi-viewport": "4.35.0",
 		"pixi.js": "^6.5.1"
 	}
 }

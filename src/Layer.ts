@@ -1,3 +1,4 @@
+import * as Color from 'color';
 import { Sprite, Texture } from 'pixi.js';
 
 export default class Layer {
@@ -63,5 +64,17 @@ export default class Layer {
 		this.update();
 
 		return this;
+	}
+
+	// not optimized for mass calls, instead use ctx#getImageData
+	getPixelColor(x: number, y: number) {
+		const clr = this.ctx.getImageData(x, y, 1, 1).data;
+
+		return new Color({
+			red: clr[0],
+			green: clr[1],
+			blue: clr[2],
+			alpha: clr[3],
+		});
 	}
 }

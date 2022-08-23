@@ -1,4 +1,4 @@
-<img src="./public/pixil_logo_ugly.png"/>
+<img src="./public/pixil_logo.png" style="width: 200px; height: 200px; image-rendering: optimizeSpeed;"/>
 
 # PIXIL
 

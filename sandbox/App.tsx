@@ -3,7 +3,7 @@ import { Brush } from '../src';
 import loadImage from '../src/util/loadImage';
 import CheckerboardOverlay from '../src/overlays/CheckerboardOverlay/CheckerboardOverlay';
 import OutlineOverlay from '../src/overlays/OutlineOverlay';
-import useEditor from './useEditor'
+import useEditor from './useEditor';
 
 export default function App() {
 
