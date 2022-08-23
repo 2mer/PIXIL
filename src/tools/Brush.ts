@@ -20,7 +20,7 @@ export default class Brush extends Tool {
 
 	constructor(
 		editor: Editor,
-		{ pluginsToDisable = [] as string[], buttons = [] } = {}
+		{ pluginsToDisable = [] as string[], buttons = [] as number[] } = {}
 	) {
 		super(editor);
 
