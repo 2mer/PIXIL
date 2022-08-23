@@ -1,13 +1,19 @@
 {
-  "compilerOptions": {
-    "outDir": "./build/",
-    "noImplicitAny": false,
-    "module": "es6",
-    "target": "es5",
-    "moduleResolution": "node",
-	"declaration": true,
-	"declarationDir": "./build/types",
-	"jsx": "react",
-	"lib": ["es2015", "dom"]
-  }
+	"compilerOptions": {
+		"outDir": "./build/",
+		"noImplicitAny": false,
+		"module": "es6",
+		"target": "es5",
+		"moduleResolution": "node",
+		"declaration": true,
+		"declarationDir": "./build/types",
+		"jsx": "react",
+		"lib": [
+			"es2015",
+			"dom"
+		],
+	},
+	"include": [
+		"src/**/*"
+	]
 }
