@@ -25,8 +25,6 @@ module.exports = {
 			amd: 'pixi.js',
 			root: 'PIXI',
 		},
-	},
-	externals: {
 		'pixi-viewport': {
 			commonjs: 'pixi-viewport',
 			commonjs2: 'pixi-viewport',
