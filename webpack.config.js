@@ -1,6 +1,6 @@
 const path = require('path');
-const BundleAnalyzerPlugin =
-	require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin =
+// 	require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
 	entry: './src/index.ts',
@@ -34,6 +34,6 @@ module.exports = {
 	// 		root: 'PIXI_VIEWPORT',
 	// 	},
 	// },
-	plugins: [new BundleAnalyzerPlugin()],
+	// plugins: [new BundleAnalyzerPlugin()],
 	mode: 'production',
 };
