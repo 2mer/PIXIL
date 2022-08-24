@@ -1,5 +1,5 @@
 // import { Drag, IDragOptions } from 'pixi-viewport';
-import { DragOptions } from 'pixi-viewport';
+import { IDragOptions } from 'pixi-viewport';
 import Editor from '../Editor';
 import Tool from './Tool';
 
@@ -7,7 +7,7 @@ export default class Pan extends Tool {
 	public name = 'pan';
 	protected customDrag;
 
-	constructor(editor: Editor, options: DragOptions = {}) {
+	constructor(editor: Editor, options: IDragOptions = {}) {
 		// constructor(editor: Editor, options: IDragOptions = {}) {
 		super(editor);
 
