@@ -140,6 +140,7 @@ export default class Editor {
 		const layer = new Layer({ width: this.width, height: this.height });
 		layer.resize(this.width, this.height);
 		this.layerContainer.addChild(layer.sprite);
+		this.layers.push(layer);
 		return layer;
 	}
 
