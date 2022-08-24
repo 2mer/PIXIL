@@ -61,6 +61,9 @@ export default class Editor {
 			interaction: this.app.renderer.plugins.interaction,
 		});
 
+		// patch pointerInteractionEvent until fixed
+		(this.viewport as any).trackedPointers = [];
+
 		this.app.stage.addChild(this.viewport);
 
 		// overlay layers
