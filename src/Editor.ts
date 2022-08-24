@@ -106,12 +106,12 @@ export default class Editor {
 
 		this.goHome(padding);
 
-		this.viewport.clamp({
-			left: -padding,
-			top: -padding,
-			bottom: height + padding,
-			right: width + padding,
-		});
+		// this.viewport.clamp({
+		// 	left: -padding,
+		// 	top: -padding,
+		// 	bottom: height + padding,
+		// 	right: width + padding,
+		// });
 
 		this.onResize.emit({ editor: this, width, height });
 
