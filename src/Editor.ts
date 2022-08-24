@@ -58,11 +58,16 @@ export default class Editor {
 			worldHeight: 0,
 			worldWidth: 0,
 
+			passiveWheel: false,
+			stopPropagation: true,
+
 			interaction: this.app.renderer.plugins.interaction,
 		});
 
 		// patch pointerInteractionEvent until fixed
-		(this.viewport as any).trackedPointers = [];
+		if (!(this.viewport as any).trackedPointers) {
+			(this.viewport as any).trackedPointers = [];
+		}
 
 		this.app.stage.addChild(this.viewport);
 

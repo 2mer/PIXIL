@@ -50,7 +50,7 @@ export default function App() {
 	}, [editor])
 
 	return (
-		<div>
+		<div style={{ height: '9999px' }}>
 			<p>Editor test</p>
 			<div ref={ref} />
 		</div>
