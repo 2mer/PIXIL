@@ -1,8 +1,13 @@
-import Point from '../Point';
-import Brush from './Brush';
+import Point from '../../Point';
+import Brush from '../Brush/Brush';
+import EraserCursor from './EraserCursor';
 
 export default class Eraser extends Brush {
 	public name = 'eraser';
+
+	createCursor() {
+		return new EraserCursor({ eraser: this });
+	}
 
 	paintPosition(pos: Point) {
 		const size = this.getSize();

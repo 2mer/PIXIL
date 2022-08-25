@@ -34,6 +34,7 @@ export default class Editor {
 
 	// events
 	public readonly onResize = new EventEmitter<CanvasResizeEvent>();
+	public readonly onUpdate = new EventEmitter<number>();
 
 	focusedLayer: Layer;
 	history;
@@ -86,9 +87,16 @@ export default class Editor {
 		this.setCanvasSize = this.setCanvasSize.bind(this);
 		this.destroy = this.destroy.bind(this);
 		this.goHome = this.goHome.bind(this);
+		this.update = this.update.bind(this);
 
 		this.mouseTracker = new MouseTracker(this);
 		this.addTool(this.mouseTracker);
+
+		this.app.ticker.add(this.update);
+	}
+
+	update() {
+		this.onUpdate.emit(this.app.ticker.elapsedMS);
 	}
 
 	get mousePosition() {
@@ -113,13 +121,6 @@ export default class Editor {
 		const padding = Math.min(this.width, this.height) * 0.1;
 
 		this.goHome(padding);
-
-		// this.viewport.clamp({
-		// 	left: -padding,
-		// 	top: -padding,
-		// 	bottom: height + padding,
-		// 	right: width + padding,
-		// });
 
 		this.onResize.emit({ editor: this, width, height });
 
@@ -158,11 +159,15 @@ export default class Editor {
 		this.focusedLayer = layer;
 	}
 
-	private addOverlayToContainer(overlay: Overlay, container: Container) {
+	protected addOverlayToContainer(overlay: Overlay, container: Container) {
 		this.overlays.push(overlay);
 		overlay.onAdded(this, container);
 	}
-	private removeOverlayFromContainer(overlay: Overlay, container: Container) {
+
+	protected removeOverlayFromContainer(
+		overlay: Overlay,
+		container: Container
+	) {
 		const index = this.overlays.indexOf(overlay);
 		if (index !== -1) {
 			this.overlays.splice(index, 1);
@@ -225,5 +230,8 @@ export default class Editor {
 
 		// events
 		this.onResize.clear();
+		this.onUpdate.clear();
+
+		this.app.ticker.remove(this.update);
 	}
 }

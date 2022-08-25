@@ -1,9 +1,11 @@
 import * as Color from 'color';
-import { InteractionEvent, Sprite, Texture } from 'pixi.js';
-import Editor from '../Editor';
-import Point from '../Point';
-import PluginPauser from '../util/PluginPauser';
-import Tool from './Tool';
+import { InteractionEvent } from 'pixi.js';
+import Editor from '../../Editor';
+import Cursor from '../../overlays/Cursor';
+import Point from '../../Point';
+import PluginPauser from '../../util/PluginPauser';
+import Tool from '../Tool';
+import BrushCursor from './BrushCursor';
 
 export default class Brush extends Tool {
 	public name = 'brush';
@@ -14,7 +16,7 @@ export default class Brush extends Tool {
 
 	protected pluginPauser: PluginPauser;
 
-	protected overlay: Sprite;
+	protected cursor: Cursor;
 	protected buttons;
 	protected pressed = false;
 
@@ -25,18 +27,19 @@ export default class Brush extends Tool {
 		super(editor);
 
 		this.pluginPauser = new PluginPauser(...pluginsToDisable);
-		this.overlay = Sprite.from(Texture.WHITE);
-		this.overlay.tint = 0;
-		this.overlay.width = 1;
-		this.overlay.height = 1;
+		this.cursor = this.createCursor();
 		this.buttons = buttons;
 	}
 
+	createCursor(): Cursor {
+		return new BrushCursor({ brush: this });
+	}
+
 	onAdded() {
-		this.editor.overlayContainer.addChild(this.overlay);
+		this.editor.addOverlay(this.cursor);
 	}
 	onRemoved() {
-		this.editor.overlayContainer.removeChild(this.overlay);
+		this.editor.removeOverlay(this.cursor);
 	}
 
 	getColor() {
@@ -93,15 +96,6 @@ export default class Brush extends Tool {
 		if (this.paused) return false;
 
 		const mousePos = this.editor.toCanvas(event).floor();
-		this.overlay.tint = this.getColor().rgbNumber();
-		this.overlay.alpha = this.getAlpha();
-
-		const size = this.getSize();
-		this.overlay.position.copyFrom(
-			mousePos.add(-size / 2, -size / 2).round()
-		);
-		this.overlay.width = size;
-		this.overlay.height = size;
 
 		if (!this.pressed) return false;
 
@@ -111,6 +105,6 @@ export default class Brush extends Tool {
 	}
 
 	destroy(): void {
-		this.overlay.destroy();
+		this.cursor.destroy();
 	}
 }

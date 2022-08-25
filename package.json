@@ -1,6 +1,6 @@
 {
 	"name": "@sgty/pixil",
-	"version": "1.0.10",
+	"version": "1.0.11",
 	"description": "",
 	"main": "build/main.js",
 	"types": "build/types",

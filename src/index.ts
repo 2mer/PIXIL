@@ -1,6 +1,8 @@
 export { default as Tool } from './tools/Tool';
-export { default as Brush } from './tools/Brush';
-export { default as Eraser } from './tools/Brush';
+export { default as Brush } from './tools/Brush/Brush';
+export { default as BrushCursor } from './tools/Brush/BrushCursor';
+export { default as Eraser } from './tools/Eraser/Eraser';
+export { default as EraserCursor } from './tools/Eraser/EraserCursor';
 export { default as Pan } from './tools/Pan';
 export { default as Pipette } from './tools/Pipette';
 export { default as Fill } from './tools/Fill';
@@ -13,6 +15,7 @@ export { default as loadImage } from './util/loadImage';
 export { default as PluginPauser } from './util/PluginPauser';
 export { default as LayerDeltaPacker } from './util/LayerDeltaPacker';
 
+export { default as Cursor } from './overlays/Cursor';
 export { default as Overlay } from './overlays/Overlay';
 export { default as OutlineOverlay } from './overlays/OutlineOverlay';
 export { default as CheckerboardOverlay } from './overlays/CheckerboardOverlay/CheckerboardOverlay';
