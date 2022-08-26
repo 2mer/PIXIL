@@ -223,6 +223,36 @@ export default class Editor {
 		return new Point().copyFrom(this.viewport.toWorld(event.data.global));
 	}
 
+	// capture image data from specified layers - drawn into given canvas
+	capture(
+		canvas: HTMLCanvasElement,
+		x = 0,
+		y = 0,
+		width = this.width,
+		height = this.height,
+		layers: Layer[] = this.layers
+	) {
+		const ctx = canvas.getContext('2d');
+		canvas.width = width;
+		canvas.height = height;
+
+		ctx.clearRect(0, 0, width, height);
+
+		layers.forEach((layer) => {
+			ctx.drawImage(
+				layer.canvas,
+				x,
+				y,
+				width,
+				height,
+				0,
+				0,
+				width,
+				height
+			);
+		});
+	}
+
 	destroy() {
 		this.app.destroy();
 		this.layers.forEach((layer) => layer.destroy());
