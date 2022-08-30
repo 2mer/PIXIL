@@ -16,6 +16,7 @@ export { default as PluginPauser } from './util/PluginPauser';
 export { default as LayerDeltaPacker } from './util/LayerDeltaPacker';
 
 export { default as Addon } from './addon/Addon';
+export { default as MovementSystem } from './addon/MovementSystem';
 export { default as Cursor } from './addon/overlays/Cursor';
 export { default as OutlineOverlay } from './addon/overlays/OutlineOverlay';
 export { default as CheckerboardOverlay } from './addon/overlays/CheckerboardOverlay/CheckerboardOverlay';

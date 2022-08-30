@@ -1,5 +1,5 @@
 import React from 'react'
-import { Brush, CheckerboardOverlay, Eraser, OutlineOverlay } from '../src';
+import { Brush, CheckerboardOverlay, Eraser, MovementSystem, OutlineOverlay } from '../src';
 import loadImage from '../src/util/loadImage';
 import useEditor from './useEditor';
 
@@ -43,6 +43,11 @@ export default function App() {
 
 				editor.setFocusedLayer(imageLayer);
 			});
+
+			const ms = new MovementSystem();
+			ms.wasd().arrows().plusminus();
+			
+			editor.addAddon(ms);
 
 			(window as any).$editor = editor;
 		}

@@ -18,7 +18,7 @@ function Vector2D(x, y) {
 	}
 
 	this.normalize = () => {
-		const l = this.length();
+		const l = this.mag();
 
 		return new Vector2D(this.x / l, this.y / l);
 	}
@@ -37,7 +37,7 @@ export interface IMovementSystemOptions {
 	zoomTapAmt?: number;
 }
 
-const DEFAULT_MOVEMENT_SYSTEM_OPTIONS = { speed : 2600, drag : 0.9, maxSpeed : 100, minSpeed : 1, zoomSpeed : 1, zoomTapAmt : 0 }
+const DEFAULT_MOVEMENT_SYSTEM_OPTIONS = { speed : 2600, drag : 0.9, maxSpeed : 100, minSpeed : 1, zoomSpeed : 2600, zoomTapAmt : 0 }
 
 type keyBindingKeys = "left" | "right" | "down" | "up" | "zoomIn" | "zoomOut";
 
@@ -81,6 +81,8 @@ export default class MovementSystem extends Addon {
 		editor.app.view.addEventListener('blur', this.handleBlur);
 		editor.app.view.addEventListener('keydown', this.handleKeyDown);
 		editor.app.view.addEventListener('keyup', this.handleKeyUp);
+
+		this.editor.app.view.setAttribute("tabindex", "0")
 	}
 	
 	onRemoved(editor: Editor): void {
@@ -101,7 +103,7 @@ export default class MovementSystem extends Addon {
 	}
 
 	plusminus() {
-		this.keyBindings.zoomIn.push('+');
+		this.keyBindings.zoomIn.push('=', "+");
 		this.keyBindings.zoomOut.push('-');
 
 		return this;
@@ -136,6 +138,7 @@ export default class MovementSystem extends Addon {
 	}
 
 	handleKeyDown(e) {
+		console.log('yooo', e)
 		if (e.target === this.editor.app.view) {
 			if (this.keyBindings.left.includes(e.key)) {
 				this.keyStatus.left = true;
@@ -220,11 +223,15 @@ export default class MovementSystem extends Addon {
 		if (this.currentSpeed.mag() >= maxSpeed) {
 			this.currentSpeed.mul(this.options.drag);
 
-			this.editor.viewport.x += this.currentSpeed.x;
-			this.editor.viewport.y += this.currentSpeed.y;
+			this.editor.viewport.x -= this.currentSpeed.x;
+			this.editor.viewport.y -= this.currentSpeed.y;
+		}
 
-			// viewer.viewport.panBy(new OpenSeadragon.Point(this.currentSpeed.x, this.currentSpeed.y), true);
-			// viewer.viewport.applyConstraints();
+		const zoomDir = this.keyStatus.zoomIn ? 1 : this.keyStatus.zoomOut ? -1 : 0
+		const zoomBy = this.options.zoomSpeed * deltaSeconds * zoomDir;
+
+		if (zoomBy) {
+			this.editor.viewport.zoom(zoomBy, true);
 		}
 	}
 
