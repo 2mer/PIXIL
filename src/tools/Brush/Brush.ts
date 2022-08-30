@@ -1,7 +1,7 @@
 import * as Color from 'color';
 import { InteractionEvent } from 'pixi.js';
 import Editor from '../../Editor';
-import Cursor from '../../overlays/Cursor';
+import Cursor from '../../addon/overlays/Cursor';
 import Point from '../../Point';
 import PluginPauser from '../../util/PluginPauser';
 import Tool from '../Tool';
@@ -36,10 +36,10 @@ export default class Brush extends Tool {
 	}
 
 	onAdded() {
-		this.editor.addOverlay(this.cursor);
+		this.editor.addAddon(this.cursor);
 	}
 	onRemoved() {
-		this.editor.removeOverlay(this.cursor);
+		this.editor.removeAddon(this.cursor);
 	}
 
 	getColor() {

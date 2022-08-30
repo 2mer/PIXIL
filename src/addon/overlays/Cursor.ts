@@ -1,6 +1,6 @@
-import { Container, DisplayObject } from 'pixi.js';
-import { Editor } from '..';
-import Overlay from './Overlay';
+import { Container } from 'pixi.js';
+import Editor from '../../Editor';
+import Addon from '../Addon';
 
 export interface CursorOptions {
 	world?: boolean;
@@ -8,10 +8,9 @@ export interface CursorOptions {
 
 const DEFAULT_CURSOR_OPTIONS: CursorOptions = { world: false };
 
-export default class Cursor extends Overlay {
+export default class Cursor extends Addon {
 	public container: Container;
 	protected options: CursorOptions;
-	protected editor: Editor;
 
 	constructor(options: CursorOptions = DEFAULT_CURSOR_OPTIONS) {
 		super();
@@ -35,16 +34,16 @@ export default class Cursor extends Overlay {
 		}
 	}
 
-	onAdded(editor: Editor, container: Container<DisplayObject>): void {
+	onAdded(editor: Editor): void {
 		this.editor = editor;
 
 		editor.onUpdate.sub(this.onUpdate);
-		container.addChild(this.container);
+		editor.overlayContainer.addChild(this.container);
 	}
 
-	onRemoved(editor: Editor, container: Container<DisplayObject>): void {
+	onRemoved(editor: Editor): void {
 		editor.onUpdate.unsub(this.onUpdate);
-		container.removeChild(this.container);
+		editor.overlayContainer.removeChild(this.container);
 	}
 
 	destroy(): void {

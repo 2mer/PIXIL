@@ -9,7 +9,7 @@
 		"declarationDir": "./build/types",
 		"jsx": "react",
 		"lib": [
-			"es2016",
+			"es2017",
 			"dom"
 		],
 	},

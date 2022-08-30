@@ -1,12 +1,11 @@
 import { Container, RenderTexture, TilingSprite } from 'pixi.js';
+import Editor, { CanvasResizeEvent } from '../../../Editor';
+import Addon from '../../Addon';
 import createCheckerboardTexture from './createCheckerboardTexture';
-import Overlay from '../Overlay';
-import { Editor } from '../..';
-import { CanvasResizeEvent } from '../../Editor';
 
 export type CheckerboardOverlayOptions = { c1: number; c2: number };
 
-export default class CheckerboardOverlay extends Overlay {
+export default class CheckerboardOverlay extends Addon {
 	c1 = 0;
 	c2 = 0xffffff;
 
@@ -36,16 +35,16 @@ export default class CheckerboardOverlay extends Overlay {
 		});
 	}
 
-	onAdded(editor: Editor, container: Container): void {
+	onAdded(editor: Editor): void {
 		if (!this.loaded) this.loadTexture(editor.app.renderer);
 
 		editor.onResize.sub(this.onResize);
-		container.addChild(this.checkerboardSprite, this.checkerboardSprite);
+		editor.underlayContainer.addChild(this.checkerboardSprite, this.checkerboardSprite);
 	}
 
-	onRemoved(editor: Editor, container: Container): void {
+	onRemoved(editor: Editor): void {
 		editor.onResize.unsub(this.onResize);
-		container.removeChild(this.checkerboardSprite);
+		editor.underlayContainer.removeChild(this.checkerboardSprite);
 	}
 
 	onResize({ width, height }: CanvasResizeEvent): void {

@@ -1,5 +1,5 @@
 import { Sprite, Texture } from 'pixi.js';
-import Cursor from '../../overlays/Cursor';
+import Cursor from '../../addon/overlays/Cursor';
 import Brush from './Brush';
 
 export default class BrushCursor extends Cursor {
