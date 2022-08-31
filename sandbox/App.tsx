@@ -1,8 +1,6 @@
 import React from 'react'
-import { Brush, Eraser } from '../src';
+import { Brush, CheckerboardOverlay, ConstraintsSystem, Eraser, MovementSystem, OutlineOverlay } from '../src';
 import loadImage from '../src/util/loadImage';
-import CheckerboardOverlay from '../src/overlays/CheckerboardOverlay/CheckerboardOverlay';
-import OutlineOverlay from '../src/overlays/OutlineOverlay';
 import useEditor from './useEditor';
 
 export default function App() {
@@ -18,8 +16,8 @@ export default function App() {
 			editor.viewport.drag({ mouseButtons: 'middle' }).wheel().pinch()
 			// editor.viewport.drag().wheel().pinch()
 
-			editor.addUnderlay(new CheckerboardOverlay({ c1: 0x797979, c2: 0xc3c3c3 }))
-			editor.addUnderlay(new OutlineOverlay({ width: 1, color: 0x323232 }))
+			editor.addAddon(new CheckerboardOverlay({ c1: 0x797979, c2: 0xc3c3c3 }))
+			editor.addAddon(new OutlineOverlay({ width: 1, color: 0x323232 }))
 
 			// editor.addTool(new Brush(editor, { buttons: [0] }));
 			editor.addTool(new Eraser(editor, { buttons: [0] }));
@@ -45,6 +43,13 @@ export default function App() {
 
 				editor.setFocusedLayer(imageLayer);
 			});
+
+			const ms = new MovementSystem();
+			ms.wasd().arrows().plusminus();
+			editor.addAddon(ms);
+
+			const cs = new ConstraintsSystem({ minZoom: 2, maxZoom: 10 });
+			editor.addAddon(cs);
 
 			(window as any).$editor = editor;
 		}

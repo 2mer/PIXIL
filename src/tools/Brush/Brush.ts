@@ -1,7 +1,7 @@
 import * as Color from 'color';
 import { InteractionEvent } from 'pixi.js';
 import Editor from '../../Editor';
-import Cursor from '../../overlays/Cursor';
+import Cursor from '../../addon/overlays/Cursor';
 import Point from '../../Point';
 import PluginPauser from '../../util/PluginPauser';
 import Tool from '../Tool';
@@ -19,6 +19,7 @@ export default class Brush extends Tool {
 	protected cursor: Cursor;
 	protected buttons;
 	protected pressed = false;
+	protected prevPos = null as Point;
 
 	constructor(
 		editor: Editor,
@@ -36,10 +37,10 @@ export default class Brush extends Tool {
 	}
 
 	onAdded() {
-		this.editor.addOverlay(this.cursor);
+		this.editor.addAddon(this.cursor);
 	}
 	onRemoved() {
-		this.editor.removeOverlay(this.cursor);
+		this.editor.removeAddon(this.cursor);
 	}
 
 	getColor() {
@@ -57,12 +58,30 @@ export default class Brush extends Tool {
 	paintPosition(pos: Point) {
 		const size = this.getSize();
 		const startPos = pos.add(-size / 2, -size / 2).round();
-
+		
 		this.editor.focusedLayer.render((ctx) => {
 			ctx.fillStyle = this.getColor().hex();
 			ctx.globalAlpha = this.getAlpha();
 			ctx.fillRect(startPos.x, startPos.y, size, size);
 		});
+	}
+
+	paintPositions(pos: Point) {
+		if (this.prevPos) {
+			const dist = this.prevPos.distance(pos);
+			const angle = this.prevPos.angleFrom(pos);
+			const size = this.getSize();
+			const halfSize = size / 2;
+
+			for (let i = 0 ; i < dist ; i += halfSize) {
+				const x = this.prevPos.x + (Math.sin(angle) * i);
+  				const y = this.prevPos.y + (Math.cos(angle) * i);
+
+				this.paintPosition(new Point(x, y).floor())
+			}
+		} else {
+			this.paintPosition(pos);
+		}
 	}
 
 	down(event: InteractionEvent): boolean {
@@ -76,6 +95,7 @@ export default class Brush extends Tool {
 		if (this.editor.focusedLayer) {
 			const mousePos = this.editor.toCanvas(event).floor();
 			this.paintPosition(mousePos);
+			this.prevPos = mousePos;
 		}
 
 		return true;
@@ -86,6 +106,7 @@ export default class Brush extends Tool {
 		if (!this.buttons.includes(event.data.button)) return false;
 
 		this.pressed = false;
+		this.prevPos = null;
 
 		this.pluginPauser.resume(this.editor.viewport.plugins);
 
@@ -99,7 +120,8 @@ export default class Brush extends Tool {
 
 		if (!this.pressed) return false;
 
-		this.paintPosition(mousePos);
+		this.paintPositions(mousePos);
+		this.prevPos = mousePos;
 
 		return true;
 	}

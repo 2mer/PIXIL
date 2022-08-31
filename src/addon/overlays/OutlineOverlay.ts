@@ -1,10 +1,10 @@
-import { Container, Graphics } from 'pixi.js';
-import Editor, { CanvasResizeEvent } from '../Editor';
-import Overlay from './Overlay';
+import { Graphics } from 'pixi.js';
+import Editor, { CanvasResizeEvent } from '../../Editor';
+import Addon from '../Addon';
 
 export type OutlineOverlayOptions = { width: number; color: number };
 
-export default class OutlineOverlay extends Overlay {
+export default class OutlineOverlay extends Addon {
 	borderGraphics: Graphics;
 	width: number;
 	color: number;
@@ -19,14 +19,14 @@ export default class OutlineOverlay extends Overlay {
 		this.onResize = this.onResize.bind(this);
 	}
 
-	onAdded(editor: Editor, container: Container) {
+	onAdded(editor: Editor) {
 		editor.onResize.sub(this.onResize);
-		container.addChild(this.borderGraphics);
+		editor.underlayContainer.addChild(this.borderGraphics);
 	}
 
-	onRemoved(editor: Editor, container: Container) {
+	onRemoved(editor: Editor) {
 		editor.onResize.unsub(this.onResize);
-		container.removeChild(this.borderGraphics);
+		editor.underlayContainer.removeChild(this.borderGraphics);
 	}
 
 	onResize({ width, height }: CanvasResizeEvent): void {

@@ -1,5 +1,5 @@
 import { Sprite, Texture } from 'pixi.js';
-import Cursor from '../../overlays/Cursor';
+import Cursor from '../../addon/overlays/Cursor';
 import Brush from './Brush';
 
 export default class BrushCursor extends Cursor {
@@ -21,8 +21,8 @@ export default class BrushCursor extends Cursor {
 		this.container.addChild(this.sprite);
 	}
 
-	onUpdate(delta: number): void {
-		super.onUpdate(delta);
+	onFrameEnd(delta: number): void {
+		super.onFrameEnd(delta);
 
 		const size = this.brush.getSize();
 		const roundSize = (size / 2) % 1;

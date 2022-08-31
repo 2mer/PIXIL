@@ -8,9 +8,9 @@ import {
 	SCALE_MODES,
 	settings,
 } from 'pixi.js';
+import Addon from './addon/Addon';
 import History from './History';
 import Layer from './Layer';
-import Overlay from './overlays/Overlay';
 import Point from './Point';
 import MouseTracker from './tools/MouseTracker';
 import Tool from './tools/Tool';
@@ -30,7 +30,7 @@ export default class Editor {
 	overlayContainer: Container;
 	layerContainer: Container;
 	underlayContainer: Container;
-	overlays = [];
+	addons = [] as Addon[];
 
 	// events
 	public readonly onResize = new EventEmitter<CanvasResizeEvent>();
@@ -159,42 +159,21 @@ export default class Editor {
 		this.focusedLayer = layer;
 	}
 
-	protected addOverlayToContainer(overlay: Overlay, container: Container) {
-		this.overlays.push(overlay);
-		overlay.onAdded(this, container);
+	addAddon(addon: Addon) {
+		this.addons.push(addon);
+		addon.editor = this;
+		addon.onAdded(this);
+
+		return this;
 	}
 
-	protected removeOverlayFromContainer(
-		overlay: Overlay,
-		container: Container
-	) {
-		const index = this.overlays.indexOf(overlay);
+	removeAddon(addon: Addon) {
+		const index = this.addons.indexOf(addon);
 		if (index !== -1) {
-			this.overlays.splice(index, 1);
-			overlay.onRemoved(this, container);
+			this.addons.splice(index, 1);
+			addon.onRemoved(this);
+			addon.editor = null;
 		}
-	}
-
-	addOverlay(overlay: Overlay) {
-		this.addOverlayToContainer(overlay, this.overlayContainer);
-
-		return this;
-	}
-
-	removeOverlay(overlay: Overlay) {
-		this.removeOverlayFromContainer(overlay, this.overlayContainer);
-
-		return this;
-	}
-
-	addUnderlay(overlay: Overlay) {
-		this.addOverlayToContainer(overlay, this.underlayContainer);
-
-		return this;
-	}
-
-	removeUnderlay(overlay: Overlay) {
-		this.removeOverlayFromContainer(overlay, this.underlayContainer);
 
 		return this;
 	}
@@ -256,7 +235,7 @@ export default class Editor {
 	destroy() {
 		this.app.destroy();
 		this.layers.forEach((layer) => layer.destroy());
-		this.overlays.forEach((overlay) => overlay.destroy());
+		this.addons.forEach((addon) => addon.destroy());
 
 		// events
 		this.onResize.clear();
