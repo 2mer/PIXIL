@@ -138,7 +138,6 @@ export default class MovementSystem extends Addon {
 	}
 
 	handleKeyDown(e) {
-		console.log('yooo', e)
 		if (e.target === this.editor.app.view) {
 			if (this.keyBindings.left.includes(e.key)) {
 				this.keyStatus.left = true;
@@ -227,7 +226,7 @@ export default class MovementSystem extends Addon {
 			this.editor.viewport.y -= this.currentSpeed.y;
 		}
 
-		const zoomDir = this.keyStatus.zoomIn ? 1 : this.keyStatus.zoomOut ? -1 : 0
+		const zoomDir = this.keyStatus.zoomIn ? -1 : this.keyStatus.zoomOut ? 1 : 0
 		const zoomBy = this.options.zoomSpeed * deltaSeconds * zoomDir;
 
 		if (zoomBy) {

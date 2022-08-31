@@ -30,8 +30,8 @@ export default class EraserCursor extends Cursor {
 		this.container.addChild(this.spriteWhite);
 	}
 
-	onUpdate(delta: number): void {
-		super.onUpdate(delta);
+	onFrameEnd(delta: number): void {
+		super.onFrameEnd(delta);
 
 		const size = this.eraser.getSize();
 		const roundSize = (size / 2) % 1;

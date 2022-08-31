@@ -1,5 +1,5 @@
 import React from 'react'
-import { Brush, CheckerboardOverlay, Eraser, MovementSystem, OutlineOverlay } from '../src';
+import { Brush, CheckerboardOverlay, ConstraintsSystem, Eraser, MovementSystem, OutlineOverlay } from '../src';
 import loadImage from '../src/util/loadImage';
 import useEditor from './useEditor';
 
@@ -46,8 +46,10 @@ export default function App() {
 
 			const ms = new MovementSystem();
 			ms.wasd().arrows().plusminus();
-			
 			editor.addAddon(ms);
+
+			const cs = new ConstraintsSystem({ minZoom: 2, maxZoom: 10 });
+			editor.addAddon(cs);
 
 			(window as any).$editor = editor;
 		}

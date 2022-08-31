@@ -14,4 +14,10 @@ export default class Point extends PixiPoint {
 	ceil() {
 		return new Point(Math.ceil(this.x), Math.ceil(this.y));
 	}
+	distance(other: Point) {
+		return Math.sqrt(Math.pow(other.x - this.x, 2) + Math.pow(other.y - this.y, 2))
+	}
+	angleFrom(other: Point) {
+		return Math.atan2(other.x - this.x, other.y - this.y)
+	}
 }
