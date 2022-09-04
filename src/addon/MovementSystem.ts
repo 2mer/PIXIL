@@ -10,22 +10,22 @@ function Vector2D(x, y) {
 	this.add = (dx, dy = dx) => {
 		this.x += dx;
 		this.y += dy;
-	}
+	};
 
 	this.mul = (mx, my = mx) => {
 		this.x *= mx;
 		this.y *= my;
-	}
+	};
 
 	this.normalize = () => {
 		const l = this.mag();
 
 		return new Vector2D(this.x / l, this.y / l);
-	}
+	};
 
 	this.clone = () => {
 		return new Vector2D(this.x, this.y);
-	}
+	};
 }
 
 export interface IMovementSystemOptions {
@@ -37,12 +37,18 @@ export interface IMovementSystemOptions {
 	zoomTapAmt?: number;
 }
 
-const DEFAULT_MOVEMENT_SYSTEM_OPTIONS = { speed : 2600, drag : 0.9, maxSpeed : 100, minSpeed : 1, zoomSpeed : 2600, zoomTapAmt : 0 }
+const DEFAULT_MOVEMENT_SYSTEM_OPTIONS = {
+	speed: 2600,
+	drag: 0.9,
+	maxSpeed: 100,
+	minSpeed: 1,
+	zoomSpeed: 2600,
+	zoomTapAmt: 0,
+};
 
-type keyBindingKeys = "left" | "right" | "down" | "up" | "zoomIn" | "zoomOut";
+type keyBindingKeys = 'left' | 'right' | 'down' | 'up' | 'zoomIn' | 'zoomOut';
 
 export default class MovementSystem extends Addon {
-
 	options: IMovementSystemOptions;
 
 	keyStatus = {
@@ -52,7 +58,7 @@ export default class MovementSystem extends Addon {
 		up: false,
 		zoomIn: false,
 		zoomOut: false,
-	}
+	};
 
 	keyBindings = {
 		left: [],
@@ -61,11 +67,13 @@ export default class MovementSystem extends Addon {
 		up: [],
 		zoomIn: [],
 		zoomOut: [],
-	}
+	};
 
 	currentSpeed = new Vector2D(0, 0);
 
-	constructor(options: IMovementSystemOptions = DEFAULT_MOVEMENT_SYSTEM_OPTIONS) {
+	constructor(
+		options: IMovementSystemOptions = DEFAULT_MOVEMENT_SYSTEM_OPTIONS
+	) {
 		super();
 		this.options = options;
 
@@ -76,17 +84,17 @@ export default class MovementSystem extends Addon {
 	}
 
 	onAdded(editor: Editor): void {
-		editor.app.ticker.add(this.tick);
+		editor.ticker.add(this.tick);
 
 		editor.app.view.addEventListener('blur', this.handleBlur);
 		editor.app.view.addEventListener('keydown', this.handleKeyDown);
 		editor.app.view.addEventListener('keyup', this.handleKeyUp);
 
-		this.editor.app.view.setAttribute("tabindex", "0")
+		this.editor.app.view.setAttribute('tabindex', '0');
 	}
-	
+
 	onRemoved(editor: Editor): void {
-		editor.app.ticker.remove(this.tick);
+		editor.ticker.remove(this.tick);
 
 		editor.app.view.removeEventListener('blur', this.handleBlur);
 		editor.app.view.removeEventListener('keydown', this.handleKeyDown);
@@ -103,7 +111,7 @@ export default class MovementSystem extends Addon {
 	}
 
 	plusminus() {
-		this.keyBindings.zoomIn.push('=', "+");
+		this.keyBindings.zoomIn.push('=', '+');
 		this.keyBindings.zoomOut.push('-');
 
 		return this;
@@ -119,11 +127,11 @@ export default class MovementSystem extends Addon {
 	}
 
 	keys(keys: { [key in keyBindingKeys]?: string | string[] }) {
-		const asArray = (o) => Array.isArray(o) ? o : [o];
+		const asArray = (o) => (Array.isArray(o) ? o : [o]);
 
 		Object.entries(keys).forEach(([key, value]) => {
-			this.keyBindings[key].push(...asArray(value))
-		})
+			this.keyBindings[key].push(...asArray(value));
+		});
 
 		return this;
 	}
@@ -154,14 +162,14 @@ export default class MovementSystem extends Addon {
 			} else if (this.keyBindings.zoomIn.includes(e.key)) {
 				// zoom tap
 				if (!this.keyStatus.zoomIn) {
-					this.editor.viewport.zoom(this.options.zoomTapAmt)
+					this.editor.viewport.zoom(this.options.zoomTapAmt);
 				}
 				this.keyStatus.zoomIn = true;
 				e.preventDefault();
 			} else if (this.keyBindings.zoomOut.includes(e.key)) {
 				// zoom tap
 				if (!this.keyStatus.zoomOut) {
-					this.editor.viewport.zoom(-this.options.zoomTapAmt)
+					this.editor.viewport.zoom(-this.options.zoomTapAmt);
 				}
 				this.keyStatus.zoomOut = true;
 				e.preventDefault();
@@ -170,15 +178,13 @@ export default class MovementSystem extends Addon {
 	}
 
 	handleKeyUp(e) {
-
 		if (e.target === this.editor.app.view) {
 			Object.entries(this.keyBindings).forEach(([key, value]) => {
 				if (value.includes(e.key)) {
 					this.keyStatus[key] = false;
 				}
-			})
+			});
 		}
-
 	}
 
 	handleBlur(e) {
@@ -191,7 +197,6 @@ export default class MovementSystem extends Addon {
 	}
 
 	tick(delta) {
-
 		const deltaSeconds = delta / 1000;
 
 		const movementDirection = new Vector2D(0, 0);
@@ -210,14 +215,16 @@ export default class MovementSystem extends Addon {
 		}
 
 		if (movementDirection.mag() > 0) {
-
 			const nDir = movementDirection.normalize();
 			const speed = this.getSpeed();
 
-			this.currentSpeed.add(nDir.x * speed * deltaSeconds, nDir.y * speed * deltaSeconds);
+			this.currentSpeed.add(
+				nDir.x * speed * deltaSeconds,
+				nDir.y * speed * deltaSeconds
+			);
 		}
 
-		const maxSpeed = this.getMaxSpeed()
+		const maxSpeed = this.getMaxSpeed();
 
 		if (this.currentSpeed.mag() >= maxSpeed) {
 			this.currentSpeed.mul(this.options.drag);
@@ -226,7 +233,11 @@ export default class MovementSystem extends Addon {
 			this.editor.viewport.y -= this.currentSpeed.y;
 		}
 
-		const zoomDir = this.keyStatus.zoomIn ? -1 : this.keyStatus.zoomOut ? 1 : 0
+		const zoomDir = this.keyStatus.zoomIn
+			? -1
+			: this.keyStatus.zoomOut
+			? 1
+			: 0;
 		const zoomBy = this.options.zoomSpeed * deltaSeconds * zoomDir;
 
 		if (zoomBy) {
@@ -235,10 +246,10 @@ export default class MovementSystem extends Addon {
 	}
 
 	getSpeed() {
-		return this.options.speed
+		return this.options.speed;
 	}
 
 	getMaxSpeed() {
-		return this.options.minSpeed
+		return this.options.minSpeed;
 	}
 }

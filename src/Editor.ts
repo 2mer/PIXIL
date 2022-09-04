@@ -7,6 +7,7 @@ import {
 	InteractionEvent,
 	SCALE_MODES,
 	settings,
+	Ticker,
 } from 'pixi.js';
 import Addon from './addon/Addon';
 import History from './History';
@@ -22,6 +23,8 @@ export type CanvasResizeEvent = EditorEvent & { width: number; height: number };
 export default class Editor {
 	app: Application;
 	viewport: Viewport;
+	ticker: Ticker;
+
 	layers: Layer[] = [];
 	width = 0;
 	height = 0;
@@ -52,6 +55,8 @@ export default class Editor {
 		this.history = new History();
 
 		this.app = new Application(rest);
+		this.ticker = new Ticker();
+		this.ticker.start();
 
 		this.viewport = new Viewport({
 			screenWidth: window.innerWidth,
@@ -92,11 +97,11 @@ export default class Editor {
 		this.mouseTracker = new MouseTracker(this);
 		this.addTool(this.mouseTracker);
 
-		this.app.ticker.add(this.update);
+		this.ticker.add(this.update);
 	}
 
 	update() {
-		this.onUpdate.emit(this.app.ticker.elapsedMS);
+		this.onUpdate.emit(this.ticker.elapsedMS);
 	}
 
 	get mousePosition() {
