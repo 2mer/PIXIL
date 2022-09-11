@@ -21,20 +21,23 @@ module.exports = {
 		path: path.resolve(__dirname, 'build'),
 		library: { name: 'pixil', type: 'umd' },
 	},
-	externals: {
-		'pixi.js': {
-			commonjs: 'pixi.js',
-			commonjs2: 'pixi.js',
-			amd: 'pixi.js',
-			root: 'PIXI',
+	externals: [
+		{
+			'pixi.js': {
+				commonjs: 'pixi.js',
+				commonjs2: 'pixi.js',
+				amd: 'pixi.js',
+				root: 'PIXI',
+			},
+			'pixi-viewport': {
+				commonjs: 'pixi-viewport',
+				commonjs2: 'pixi-viewport',
+				amd: 'pixi-viewport',
+				root: 'PIXI_VIEWPORT',
+			},
 		},
-		'pixi-viewport': {
-			commonjs: 'pixi-viewport',
-			commonjs2: 'pixi-viewport',
-			amd: 'pixi-viewport',
-			root: 'PIXI_VIEWPORT',
-		},
-	},
+		/@pixi\/.*/
+	],
 	// plugins: [new BundleAnalyzerPlugin()],
 	optimization: {
 		minimize: true,

@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@pixi/ticker': ^6.5.3
   '@sgty/m-it': ^1.0.2
   '@types/color': ^3.0.3
   color: ^4.2.3
@@ -18,9 +19,10 @@ specifiers:
   webpack-dev-server: ^4.10.0
 
 dependencies:
+  '@pixi/ticker': 6.5.3
   '@sgty/m-it': 1.0.2
   color: 4.2.3
-  pixi-viewport: 4.35.0
+  pixi-viewport: 4.35.0_@pixi+ticker@6.5.3
   pixi.js: 6.5.1
 
 devDependencies:
@@ -510,6 +512,13 @@ packages:
     dependencies:
       '@pixi/extensions': 6.5.1
       '@pixi/settings': 6.5.1
+    dev: false
+
+  /@pixi/ticker/6.5.3:
+    resolution: {integrity: sha512-4RHoPxCdH8017HaY+l/F6xTS8igNja5sEQtyXSWlPvd1Y3jnifmIvzi8nrpn7JIHpeN7iHenRCjyM3UYEyUr7g==}
+    peerDependencies:
+      '@pixi/extensions': 6.5.3
+      '@pixi/settings': 6.5.3
     dev: false
 
   /@pixi/utils/6.5.1_rh5pi7xzpltsgqq4zj3zezcvlm:
@@ -2181,13 +2190,15 @@ packages:
     engines: {node: '>=8.6'}
     dev: true
 
-  /pixi-viewport/4.35.0:
+  /pixi-viewport/4.35.0_@pixi+ticker@6.5.3:
     resolution: {integrity: sha512-jrrDBlW/F8su5abLeiilq2hu2XOHHN6flMQ0DNa5pxY39cAQeC+LwyCQeHJF57a8nM10P/EhcR7M1Tu2CJEefw==}
     peerDependencies:
       '@pixi/display': ^6.5.1
       '@pixi/interaction': ^6.5.1
       '@pixi/math': ^6.5.1
       '@pixi/ticker': ^6.5.1
+    dependencies:
+      '@pixi/ticker': 6.5.3
     dev: false
 
   /pixi.js/6.5.1:

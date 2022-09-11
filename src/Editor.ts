@@ -7,8 +7,8 @@ import {
 	InteractionEvent,
 	SCALE_MODES,
 	settings,
-	Ticker,
 } from 'pixi.js';
+import { Ticker } from '@pixi/ticker'
 import Addon from './addon/Addon';
 import History from './History';
 import Layer from './Layer';
