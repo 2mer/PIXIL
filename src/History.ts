@@ -14,7 +14,7 @@ export type HistoryEntry = {
 export default class History {
 	index = -1;
 	entries = [] as HistoryEntry[];
-	limit = undefined as undefined | number;
+	limit = 0;
 	enabled = false;
 
 	onHistoryChanged = new EventEmitter<{ history: History }>();
