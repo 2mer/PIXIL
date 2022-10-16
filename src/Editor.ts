@@ -8,7 +8,7 @@ import {
 	SCALE_MODES,
 	settings,
 } from 'pixi.js';
-import { Ticker } from '@pixi/ticker'
+import { Ticker } from '@pixi/ticker';
 import Addon from './addon/Addon';
 import History from './History';
 import Layer from './Layer';
@@ -40,7 +40,7 @@ export default class Editor {
 	public readonly onUpdate = new EventEmitter<number>();
 
 	focusedLayer: Layer;
-	history;
+	history: History;
 
 	protected mouseTracker: MouseTracker;
 

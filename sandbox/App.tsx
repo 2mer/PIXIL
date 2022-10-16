@@ -1,6 +1,7 @@
 import React from 'react'
 import { Brush, CheckerboardOverlay, ConstraintsSystem, Eraser, MovementSystem, OutlineOverlay } from '../src';
 import loadImage from '../src/util/loadImage';
+import HistoryList from './HistoryList';
 import useEditor from './useEditor';
 
 export default function App() {
@@ -10,8 +11,24 @@ export default function App() {
 		backgroundColor: 0xaeaeae,
 	})
 
+	const [selectedTool, setSelectedTool] = React.useState(null);
+
+	React.useEffect(() => {
+		if (editor && selectedTool) {
+
+			editor.addTool(selectedTool)
+
+			return () => {
+				editor.removeTool(selectedTool)
+			}
+		}
+	}, [editor, selectedTool])
+
+
 	React.useEffect(() => {
 		if (editor) {
+
+			editor.history.limit = 5;
 			// setup interactions
 			editor.viewport.drag({ mouseButtons: 'middle' }).wheel().pinch()
 			// editor.viewport.drag().wheel().pinch()
@@ -20,7 +37,6 @@ export default function App() {
 			editor.addAddon(new OutlineOverlay({ width: 1, color: 0x323232 }))
 
 			// editor.addTool(new Brush(editor, { buttons: [0] }));
-			editor.addTool(new Eraser(editor, { buttons: [0] }));
 
 			// set canvas size to first image load
 			loadImage('logo192.png').then(image => {
@@ -29,17 +45,21 @@ export default function App() {
 				// draw the image onto the layer
 				const imageLayer = editor.createLayer().drawImage(image);
 
-				const drawingLayer = editor.createLayer().render(ctx => {
-					ctx.fillStyle = "#ff0000FF"
+				const drawingLayer = editor.createLayer();
 
-					ctx.lineWidth = 1
+				(window as any).rect = (x, y, w, h, color = 'red') => {
+					drawingLayer.render(ctx => {
+						ctx.strokeStyle = color;
 
-					const halfW = ctx.lineWidth / 2;
+						ctx.lineWidth = 1
 
-					ctx.beginPath();
-					ctx.rect(0 + halfW, 0 + halfW, 20 - 2 * halfW, 20 - 2 * halfW);
-					ctx.stroke();
-				});
+						const halfW = ctx.lineWidth / 2;
+
+						ctx.beginPath();
+						ctx.rect(x + halfW, y + halfW, w - 2 * halfW, h - 2 * halfW);
+						ctx.stroke();
+					});
+				}
 
 				editor.setFocusedLayer(imageLayer);
 			});
@@ -56,9 +76,22 @@ export default function App() {
 	}, [editor])
 
 	return (
-		<div>
-			<p>Editor test</p>
-			<div ref={ref} />
+		<div style={{ display: 'flex' }}>
+			<div>
+				<p>Editor test</p>
+				<div ref={ref} />
+				<div>
+					<button onClick={() => {
+						setSelectedTool(new Brush(editor, { buttons: [0] }))
+					}}>brush</button>
+					<button onClick={() => {
+						setSelectedTool(new Eraser(editor, { buttons: [0] }))
+					}}>eraser</button>
+				</div>
+			</div>
+			<div>
+				<HistoryList editor={editor} />
+			</div>
 		</div>
 	)
 }

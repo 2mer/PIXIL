@@ -6,6 +6,7 @@ import Point from '../../Point';
 import PluginPauser from '../../util/PluginPauser';
 import Tool from '../Tool';
 import BrushCursor from './BrushCursor';
+import LayerDeltaPacker from '../../util/LayerDeltaPacker';
 
 export default class Brush extends Tool {
 	public name = 'brush';
@@ -20,6 +21,7 @@ export default class Brush extends Tool {
 	protected buttons;
 	protected pressed = false;
 	protected prevPos = null as Point;
+	protected layerDeltaPacker: LayerDeltaPacker;
 
 	constructor(
 		editor: Editor,
@@ -30,6 +32,7 @@ export default class Brush extends Tool {
 		this.pluginPauser = new PluginPauser(...pluginsToDisable);
 		this.cursor = this.createCursor();
 		this.buttons = buttons;
+		this.layerDeltaPacker = new LayerDeltaPacker();
 	}
 
 	createCursor(): Cursor {
@@ -58,7 +61,7 @@ export default class Brush extends Tool {
 	paintPosition(pos: Point) {
 		const size = this.getSize();
 		const startPos = pos.add(-size / 2, -size / 2).round();
-		
+
 		this.editor.focusedLayer.render((ctx) => {
 			ctx.fillStyle = this.getColor().hex();
 			ctx.globalAlpha = this.getAlpha();
@@ -73,11 +76,11 @@ export default class Brush extends Tool {
 			const size = this.getSize();
 			const halfSize = size / 2;
 
-			for (let i = 0 ; i < dist ; i += halfSize) {
-				const x = this.prevPos.x + (Math.sin(angle) * i);
-  				const y = this.prevPos.y + (Math.cos(angle) * i);
+			for (let i = 0; i < dist; i += halfSize) {
+				const x = this.prevPos.x + Math.sin(angle) * i;
+				const y = this.prevPos.y + Math.cos(angle) * i;
 
-				this.paintPosition(new Point(x, y).floor())
+				this.paintPosition(new Point(x, y).floor());
 			}
 		} else {
 			this.paintPosition(pos);
@@ -93,6 +96,11 @@ export default class Brush extends Tool {
 		this.pluginPauser.pause(this.editor.viewport.plugins);
 
 		if (this.editor.focusedLayer) {
+			if (this.editor.history.enabled) {
+				// start delta
+				this.layerDeltaPacker.begin(this.editor.focusedLayer);
+			}
+
 			const mousePos = this.editor.toCanvas(event).floor();
 			this.paintPosition(mousePos);
 			this.prevPos = mousePos;
@@ -109,6 +117,19 @@ export default class Brush extends Tool {
 		this.prevPos = null;
 
 		this.pluginPauser.resume(this.editor.viewport.plugins);
+
+		if (this.editor.history.enabled) {
+			// end delta
+			if (this.layerDeltaPacker.startData) {
+				this.editor.history.add({
+					identifier: this.name,
+					target: this.editor.focusedLayer,
+					delta: this.layerDeltaPacker.end(this.editor.focusedLayer),
+				});
+			}
+		} else {
+			this.layerDeltaPacker.clear();
+		}
 
 		return true;
 	}
