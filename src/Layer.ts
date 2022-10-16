@@ -1,7 +1,8 @@
 import * as Color from 'color';
 import { Sprite, Texture } from 'pixi.js';
+import { IHistoryTarget } from './History';
 
-export default class Layer {
+export default class Layer implements IHistoryTarget {
 	canvas: HTMLCanvasElement;
 	texture: Texture;
 	sprite: Sprite;
@@ -9,6 +10,7 @@ export default class Layer {
 	destroyed = false;
 	width: number = 0;
 	height: number = 0;
+	name: string = 'New Layer';
 
 	constructor({ width, height }) {
 		this.canvas = document.createElement('canvas');
@@ -18,6 +20,43 @@ export default class Layer {
 
 		this.sprite = Sprite.from(this.texture);
 		this.resize(width, height);
+	}
+
+	addImageData(data, dx, dy, subtract = false) {
+		const imageData = this.ctx.getImageData(
+			dx,
+			dy,
+			data.width,
+			data.height
+		);
+
+		for (let j = 0; j < data.height; j++) {
+			for (let i = 0; i < data.width; i++) {
+				const index = (i + j * data.width) * 4;
+
+				if (subtract) {
+					imageData.data[index + 0] -= data.data[index + 0];
+					imageData.data[index + 1] -= data.data[index + 1];
+					imageData.data[index + 2] -= data.data[index + 2];
+					imageData.data[index + 3] -= data.data[index + 3];
+				} else {
+					imageData.data[index + 0] += data.data[index + 0];
+					imageData.data[index + 1] += data.data[index + 1];
+					imageData.data[index + 2] += data.data[index + 2];
+					imageData.data[index + 3] += data.data[index + 3];
+				}
+			}
+		}
+
+		this.ctx.putImageData(imageData, dx, dy);
+		this.update();
+	}
+
+	undo(delta: any) {
+		this.addImageData(delta, delta.dx, delta.dy, true);
+	}
+	redo(delta: any) {
+		this.addImageData(delta, delta.dx, delta.dy);
 	}
 
 	resize(width: number, height: number) {
