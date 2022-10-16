@@ -20,3 +20,23 @@ yarn add @sgty/pixil
 ```sh
 pnpm add @sgty/pixil
 ```
+
+## Features:
+- [x] Layers
+- [x] Tools
+  - [x] Brush
+  - [x] Eraser
+  - [ ] Fill
+- [x] History
+- [x] Plugins
+
+### History
+History is opt-in as to not bloat your memory when not necessary
+to enable history:
+```js
+editor.history.enabled = true;
+```
+you can also limit the amount of entries in the history (no limit by default):
+```js
+editor.history.limit = 100; // 100 entries
+```
