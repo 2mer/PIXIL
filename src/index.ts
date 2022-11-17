@@ -5,7 +5,8 @@ export { default as Eraser } from './tools/Eraser/Eraser';
 export { default as EraserCursor } from './tools/Eraser/EraserCursor';
 export { default as Pan } from './tools/Pan';
 export { default as Pipette } from './tools/Pipette';
-export { default as Fill } from './tools/Fill';
+export { default as Fill } from './tools/Fill/Fill';
+export { default as floodFill } from './tools/Fill/floodFill';
 export { default as MouseTracker } from './tools/MouseTracker';
 
 export { default as Layer } from './Layer';

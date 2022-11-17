@@ -1,5 +1,5 @@
 import React from 'react'
-import { Brush, CheckerboardOverlay, ConstraintsSystem, Eraser, MovementSystem, OutlineOverlay } from '../src';
+import { Brush, CheckerboardOverlay, ConstraintsSystem, Eraser, Fill, MovementSystem, OutlineOverlay } from '../src';
 import loadImage from '../src/util/loadImage';
 import HistoryList from './HistoryList';
 import useEditor from './useEditor';
@@ -28,6 +28,7 @@ export default function App() {
 	React.useEffect(() => {
 		if (editor) {
 
+			editor.history.enabled = true;
 			editor.history.limit = 5;
 			// setup interactions
 			editor.viewport.drag({ mouseButtons: 'middle' }).wheel().pinch()
@@ -87,6 +88,9 @@ export default function App() {
 					<button onClick={() => {
 						setSelectedTool(new Eraser(editor, { buttons: [0] }))
 					}}>eraser</button>
+					<button onClick={() => {
+						setSelectedTool(new Fill(editor, { buttons: [0] }))
+					}}>fill</button>
 				</div>
 			</div>
 			<div>

@@ -23,7 +23,7 @@ export default class Pipette extends Tool {
 				this.editor.focusedLayer.getPixelColor(pos.x, pos.y)
 			);
 		} else {
-			let clr = new Color({ reg: 0, green: 0, blue: 0, alpha: 0 });
+			let clr = new Color({ r: 0, g: 0, b: 0 }).alpha(0);
 
 			[...this.editor.layers].reverse().some((layer) => {
 				clr = layer.getPixelColor(pos.x, pos.y);

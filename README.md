@@ -26,7 +26,7 @@ pnpm add @sgty/pixil
 - [x] Tools
   - [x] Brush
   - [x] Eraser
-  - [ ] Fill
+  - [x] Fill (using [q-floodfill](https://www.npmjs.com/package/q-floodfill?activeTab=readme))
 - [x] History
 - [x] Plugins
 
