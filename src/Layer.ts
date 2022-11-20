@@ -1,4 +1,4 @@
-import * as Color from 'color';
+import Color from 'color';
 import { Sprite, Texture } from 'pixi.js';
 import { IHistoryTarget } from './History';
 

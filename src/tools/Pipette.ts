@@ -1,5 +1,5 @@
 import EventEmitter from '@sgty/m-it';
-import * as Color from 'color';
+import Color from 'color';
 import { InteractionEvent } from 'pixi.js';
 import Editor from '../Editor';
 import Point from '../Point';
