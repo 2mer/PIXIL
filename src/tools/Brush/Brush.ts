@@ -11,9 +11,8 @@ import LayerDeltaPacker from '../../util/LayerDeltaPacker';
 export default class Brush extends Tool {
 	public name = 'brush';
 
-	public color = new Color(0);
-	public alpha = 1;
-	public size = 4;
+	public color;
+	public size;
 
 	protected pluginPauser: PluginPauser;
 
@@ -25,7 +24,7 @@ export default class Brush extends Tool {
 
 	constructor(
 		editor: Editor,
-		{ pluginsToDisable = [] as string[], buttons = [] as number[] } = {}
+		{ pluginsToDisable = [] as string[], buttons = [] as number[], color = Color(0), size = 4 } = {}
 	) {
 		super(editor);
 
@@ -33,6 +32,8 @@ export default class Brush extends Tool {
 		this.cursor = this.createCursor();
 		this.buttons = buttons;
 		this.layerDeltaPacker = new LayerDeltaPacker();
+		this.color = color;
+		this.size = size;
 	}
 
 	createCursor(): Cursor {
@@ -50,10 +51,6 @@ export default class Brush extends Tool {
 		return this.color;
 	}
 
-	getAlpha() {
-		return this.alpha;
-	}
-
 	getSize() {
 		return this.size * 2 - 1;
 	}
@@ -64,7 +61,7 @@ export default class Brush extends Tool {
 
 		this.editor.focusedLayer.render((ctx) => {
 			ctx.fillStyle = this.getColor().hex();
-			ctx.globalAlpha = this.getAlpha();
+			ctx.globalAlpha = this.color.alpha();
 			ctx.fillRect(startPos.x, startPos.y, size, size);
 		});
 	}

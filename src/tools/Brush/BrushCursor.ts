@@ -31,7 +31,7 @@ export default class BrushCursor extends Cursor {
 		this.container.position.y += roundSize;
 
 		this.sprite.tint = this.brush.getColor().rgbNumber();
-		this.sprite.alpha = this.brush.getAlpha();
+		this.sprite.alpha = this.brush.getColor().alpha();
 		this.sprite.width = size;
 		this.sprite.height = size;
 	}

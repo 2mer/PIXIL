@@ -1,3 +1,4 @@
+import Color from 'color';
 import React from 'react';
 import {
 	Brush,
@@ -98,7 +99,10 @@ export default function App() {
 					<button
 						onClick={() => {
 							setSelectedTool(
-								new Brush(editor, { buttons: [0] })
+								new Brush(editor, {
+									buttons: [0],
+									color: Color.rgb(255, 0, 0).alpha(0.1),
+								})
 							);
 						}}
 					>
@@ -107,7 +111,9 @@ export default function App() {
 					<button
 						onClick={() => {
 							setSelectedTool(
-								new Eraser(editor, { buttons: [0] })
+								new Eraser(editor, {
+									buttons: [0],
+								})
 							);
 						}}
 					>
@@ -115,7 +121,12 @@ export default function App() {
 					</button>
 					<button
 						onClick={() => {
-							setSelectedTool(new Fill(editor, { buttons: [0] }));
+							setSelectedTool(
+								new Fill(editor, {
+									buttons: [0],
+									color: Color.rgb(255, 100, 100).alpha(0.5),
+								})
+							);
 						}}
 					>
 						fill

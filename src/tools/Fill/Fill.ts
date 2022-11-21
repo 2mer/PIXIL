@@ -9,9 +9,8 @@ import floodFill from './floodFill';
 export default class Fill extends Tool {
 	public name = 'fill';
 
-	public color = new Color(0);
-	public size = 4;
-	public tolerance = 0;
+	public color;
+	public tolerance;
 
 	protected pluginPauser: PluginPauser;
 
@@ -21,13 +20,16 @@ export default class Fill extends Tool {
 
 	constructor(
 		editor: Editor,
-		{ pluginsToDisable = [] as string[], buttons = [] as number[] } = {}
+		{ pluginsToDisable = [] as string[], buttons = [] as number[], tolerance = 0, color = Color(0) } = {}
 	) {
 		super(editor);
 
 		this.pluginPauser = new PluginPauser(...pluginsToDisable);
 		this.buttons = buttons;
 		this.layerDeltaPacker = new LayerDeltaPacker();
+
+		this.tolerance = tolerance;
+		this.color = color;
 	}
 
 	getColor() {
