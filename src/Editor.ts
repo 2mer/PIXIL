@@ -68,6 +68,7 @@ export default class Editor {
 			stopPropagation: true,
 
 			interaction: this.app.renderer.plugins.interaction,
+			divWheel: this.app.view,
 		});
 
 		// patch pointerInteractionEvent until fixed
