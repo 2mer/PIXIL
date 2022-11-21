@@ -29,7 +29,20 @@ export default class History {
 		this.entries.push(entry);
 		this.index++;
 
+		if (this.limit) {
+
+			const over = this.entries.length - this.limit;
+
+			if (over > 0) {
+				this.entries.splice(0, over);
+
+				this.index -= over;
+			}
+
+		}
+
 		this.onHistoryChanged.emit({ history: this });
+
 	}
 
 	undo() {
